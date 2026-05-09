@@ -1,0 +1,21 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "composite": true,
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "@oootp/backend/*": ["../backend/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "../backend/.adonisjs/**/*.ts"  // only the generated types, not all backend source
+  ],
+  "exclude": [
+    "../backend/build",
+    "../backend/node_modules"
+  ]
+}
