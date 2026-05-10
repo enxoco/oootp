@@ -18,4 +18,7 @@ export interface ApiDefinition {
       destroy: typeof routes['profile.access_tokens.destroy']
     }
   }
+  usersLists: {
+    show: typeof routes['users_lists.show']
+  }
 }
