@@ -1,0 +1,28 @@
+tasks:
+
+  - name: default
+    description: Full dev setup including cluster and core
+    actions:
+      - task: setup-cluster
+      - task: dev
+
+  - name: dev
+    description: Create and deploy the bundle on an existing cluster (for iteration/dev speed)
+    actions:
+      - cmd: uds zarf package create . --confirm --no-progress --flavor upstream --skip-sbom
+      - shell:
+          linux: bash
+          darwin: bash
+        cmd: |
+          for pkg in $(find . -maxdepth 1 -name "zarf-package-*-${UDS_ARCH}-dev-upstream.tar.zst" 2>/dev/null); do
+            cp "${pkg}" "$(echo "${pkg}" | sed 's/-upstream\.tar\.zst/.tar.zst/')"
+          done
+          UDS_CONFIG=bundle/uds-config.yaml uds create bundle/ --confirm --no-progress
+      - env:
+          - UDS_CONFIG=bundle/uds-config.yaml
+        cmd: uds deploy "bundle/uds-bundle-oootp-test-${UDS_ARCH}-dev.tar.zst" --confirm --no-progress
+
+  - name: setup-cluster
+    description: Create k3d cluster and deploy UDS core
+    actions:
+      - cmd: uds deploy k3d-core:latest --confirm

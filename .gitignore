@@ -30,3 +30,6 @@ yarn-error.log
 
 # Frontend compiled assets
 public/assets
+
+# Zarf/UDS build artifacts
+*.tar.zst

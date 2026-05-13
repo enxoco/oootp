@@ -12,6 +12,7 @@ const dbConfig = defineConfig({
         user: process.env.DB_USER || 'oootp',
         password: process.env.DB_PASSWORD || '',
         database: process.env.DB_DATABASE || 'oootp',
+        ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
       },
       migrations: {
         naturalSort: true,
