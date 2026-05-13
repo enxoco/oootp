@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: frontend
+    namespace: oootp
+    labels:
+        app.kubernetes.io/name: frontend
+        app.kubernetes.io/part-of: oootp
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app.kubernetes.io/name: frontend
+    template:
+        metadata:
+            name: ""
+            labels:
+                app.kubernetes.io/name: frontend
+        spec:
+            initContainers:
+                - name: wait-backend
+                  image: busybox:1.36
+                  imagePullPolicy: IfNotPresent
+                  command:
+                    - sh
+                    - -c
+                    - until nc -z backend 3333; do echo waiting for backend:3333; sleep 2; done
+                  securityContext:
+                    readOnlyRootFilesystem: true
+                    runAsNonRoot: true
+                    allowPrivilegeEscalation: false
+            containers:
+                - name: frontend
+                  image: oootp-frontend
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                    - name: http
+                      containerPort: 8080
+                      protocol: TCP
+                  securityContext:
+                    readOnlyRootFilesystem: true
+                    runAsNonRoot: true
+                    allowPrivilegeEscalation: false
+                  volumeMounts:
+                    - name: nginx-cache
+                      mountPath: /var/cache/nginx
+                    - name: nginx-tmp
+                      mountPath: /tmp
+                    - name: nginx-run
+                      mountPath: /var/run
+            volumes:
+                - name: nginx-cache
+                  emptyDir: {}
+                - name: nginx-tmp
+                  emptyDir: {}
+                - name: nginx-run
+                  emptyDir: {}

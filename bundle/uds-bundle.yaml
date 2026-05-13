@@ -1,0 +1,35 @@
+# Copyright 2024 Defense Unicorns
+# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
+
+kind: UDSBundle
+metadata:
+  name: oootp-test
+  description: A UDS bundle for deploying oootp and its dependencies on a development cluster
+  version: dev
+
+packages:
+  - name: postgres-operator
+    repository: ghcr.io/uds-packages/postgres-operator
+    ref: 1.15.1-uds.4-upstream
+    overrides:
+      postgres-operator:
+        uds-postgres-config:
+          values:
+            - path: postgresql
+              value:
+                enabled: true
+                teamId: "oootp"
+                volume:
+                  size: "1Gi"
+                numberOfInstances: 1
+                users:
+                  oootp.oootp: []
+                databases:
+                  oootp: oootp.oootp
+                version: "16"
+                ingress:
+                  - remoteNamespace: oootp
+
+  - name: oootp
+    path: ..
+    ref: dev

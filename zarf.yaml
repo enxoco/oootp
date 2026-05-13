@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/zarf-dev/zarf/main/zarf.schema.json
+apiVersion: zarf.dev/v1alpha1
+kind: ZarfPackageConfig
+metadata:
+    name: oootp
+    description: UDS package for oootp
+    version: dev
+components:
+    - name: backend
+      required: true
+      description: Deploy backend
+      actions:
+        onDeploy:
+          before:
+            - maxTotalSeconds: 300
+              description: Wait for postgres-operator credentials and create oootp-postgres secret
+              cmd: |
+                kubectl create namespace oootp --dry-run=client -o yaml | kubectl apply -f -
+                SECRET="oootp.oootp.pg-cluster.credentials.postgresql.acid.zalan.do"
+                until kubectl -n oootp get secret "$SECRET" 2>/dev/null; do
+                  echo "Waiting for postgres-operator to provision credentials..."
+                  sleep 10
+                done
+                DB_USER=$(kubectl -n oootp get secret "$SECRET" -o jsonpath='{.data.username}' | base64 -d)
+                DB_PASS=$(kubectl -n oootp get secret "$SECRET" -o jsonpath='{.data.password}' | base64 -d)
+                kubectl -n oootp create secret generic oootp-postgres \
+                  --from-literal=DB_USER="$DB_USER" \
+                  --from-literal=DB_PASSWORD="$DB_PASS" \
+                  --dry-run=client -o yaml | kubectl apply -f -
+      manifests:
+        - name: backend-manifests
+          namespace: oootp
+          files:
+            - charts/templates/namespace.yaml
+            - charts/templates/deployment-backend.yaml
+            - charts/templates/service-backend.yaml
+      images:
+        - oootp-backend
+        - busybox:1.36
+    - name: frontend
+      required: true
+      description: Deploy frontend
+      manifests:
+        - name: frontend-manifests
+          namespace: oootp
+          files:
+            - charts/templates/namespace.yaml
+            - charts/templates/deployment-frontend.yaml
+            - charts/templates/service-frontend.yaml
+            - charts/templates/uds-package.yaml
+      images:
+        - oootp-frontend
+        - busybox:1.36

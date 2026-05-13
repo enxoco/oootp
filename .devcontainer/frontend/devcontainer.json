@@ -1,0 +1,12 @@
+{
+  "name": "OOOTP Frontend",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "frontend",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [5173],
+  "portsAttributes": {
+    "5173": { "label": "Vite Dev Server" }
+  },
+  "postCreateCommand": "npm install && npm run build -w @oootp/backend",
+  "remoteUser": "node"
+}
