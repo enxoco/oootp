@@ -9,7 +9,7 @@ spec:
             mode: ambient
         expose:
             - gateway: tenant
-              host: frontend
+              host: oootp
               podLabels:
                 app.kubernetes.io/name: frontend
               port: 8080
