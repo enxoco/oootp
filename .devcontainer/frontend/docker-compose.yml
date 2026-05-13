@@ -1,0 +1,9 @@
+services:
+  frontend:
+    image: mcr.microsoft.com/devcontainers/javascript-node:24
+    volumes:
+      - ../../:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity
+    environment:
+      NODE_ENV: development

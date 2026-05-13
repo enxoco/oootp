@@ -1,0 +1,13 @@
+{
+  "name": "OOOTP Backend",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "backend",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [3333, 5432],
+  "portsAttributes": {
+    "3333": { "label": "AdonisJS API" },
+    "5432": { "label": "PostgreSQL" }
+  },
+  "postCreateCommand": "npm install",
+  "remoteUser": "node"
+}
