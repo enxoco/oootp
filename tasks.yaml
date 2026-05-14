@@ -7,6 +7,7 @@ includes:
   - scan: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/scan.yaml
   - vouch: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/vouch.yaml
   - publish: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/publish.yaml
+  - olm: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/olm.yaml
 
 tasks:
 
