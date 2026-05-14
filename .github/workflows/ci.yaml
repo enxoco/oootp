@@ -51,8 +51,8 @@ jobs:
         run: |
           uds run vouch:package \
             --with github_token="${{ secrets.GITHUB_TOKEN }}" \
-            --with olm_cat="${{ secrets.OLM_CAT }}" \
-            --with olm_org="${{ secrets.OLM_ORG }}" \
+            --with olm_cat=cat-api.uds-mil.us \
+            --with olm_org=uds-army-demo \
             --with attestations="lint-witness.json,gitleaks-witness.json,opengrep-witness.json" \
             --with sarif_files="gitleaks.sarif.json,opengrep.sarif.json"
 
@@ -60,7 +60,7 @@ jobs:
         # if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           uds run publish:zarf-package \
-            --with registry="registry.uds-mil.us" \
-            --with registry_org="${{ secrets.REGISTRY_ORG }}" \
+            --with registry=registry.uds-mil.us \
+            --with registry_org=uds-army-demo \
             --with registry_user_id="${{ secrets.REGISTRY_USER_ID }}" \
             --with registry_password="${{ secrets.REGISTRY_PASSWORD }}"
