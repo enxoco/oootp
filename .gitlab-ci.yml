@@ -19,9 +19,6 @@ variables:
 ci:
   stage: ci
   image: node:24
-  id_tokens:
-    SIGSTORE_ID_TOKEN:
-      aud: sigstore
   services:
     - name: docker:24-dind
       command: ["--tls=false"]
@@ -29,17 +26,14 @@ ci:
     - *install-deps
   script:
     - npm ci
-    - uds run attest:lint --with fulcio_oidc_issuer="$CI_SERVER_URL"
+    - uds run lint
     - |
       uds run scan:security \
         --with opengrep_scan_path=apps/ \
-        --with fulcio_oidc_issuer="$CI_SERVER_URL"
+        --with enable_sigstore=false
     - uds run build-images
   artifacts:
     paths:
-      - lint-witness.json
-      - gitleaks-witness.json
-      - opengrep-witness.json
       - gitleaks.sarif.json
       - opengrep.sarif.json
     when: always
@@ -48,9 +42,6 @@ ci:
 publish:
   stage: publish
   image: node:24
-  id_tokens:
-    SIGSTORE_ID_TOKEN:
-      aud: sigstore
   services:
     - name: docker:24-dind
       command: ["--tls=false"]
@@ -68,8 +59,7 @@ publish:
         --with github_token="$GITHUB_TOKEN" \
         --with olm_cat="$OLM_CAT" \
         --with olm_org="$OLM_ORG" \
-        --with fulcio_oidc_issuer="$CI_SERVER_URL" \
-        --with attestations="lint-witness.json,gitleaks-witness.json,opengrep-witness.json" \
+        --with enable_sigstore=false \
         --with sarif_files="gitleaks.sarif.json,opengrep.sarif.json"
     - |
       uds run publish:zarf-package \
