@@ -1,4 +1,26 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/maru-runner/refs/heads/main/tasks.schema.json
+
+includes:
+  - setup: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/setup.yaml
+  - attest: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/attest.yaml
+  - build: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/build.yaml
+  - scan: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/scan.yaml
+  - vouch: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/vouch.yaml
+  - publish: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/publish.yaml
+  - olm: https://raw.githubusercontent.com/defenseunicorns-udm/udm-common/feat/configurable-fulcio-oidc-issuer/tasks/olm.yaml
+
 tasks:
+
+  - name: lint
+    description: Lint all TypeScript source via Turbo
+    actions:
+      - cmd: npm run lint
+
+  - name: build-images
+    description: Build Docker images for backend and frontend
+    actions:
+      - cmd: docker build -t oootp-backend -f apps/backend/Dockerfile .
+      - cmd: docker build -t oootp-frontend -f apps/frontend/Dockerfile .
 
   - name: default
     description: Full dev setup including cluster and core
@@ -7,8 +29,9 @@ tasks:
       - task: dev
 
   - name: dev
-    description: Create and deploy the bundle on an existing cluster (for iteration/dev speed)
+    description: Build images and deploy the bundle on an existing cluster
     actions:
+      - task: build-images
       - cmd: uds zarf package create . --confirm --no-progress --flavor upstream --skip-sbom
       - shell:
           linux: bash
