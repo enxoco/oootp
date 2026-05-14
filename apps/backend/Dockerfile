@@ -14,7 +14,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=builder /app/apps/backend/build ./
-COPY apps/backend/docker-entrypoint.sh ./
+COPY --from=builder /app/apps/backend/docker-entrypoint.sh ./
 RUN npm install --omit=dev && chmod +x docker-entrypoint.sh
 
 EXPOSE 3333

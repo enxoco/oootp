@@ -18,8 +18,8 @@ tasks:
   - name: build-images
     description: Build Docker images for backend and frontend
     actions:
-      - cmd: docker build -t oootp-backend ./apps/backend
-      - cmd: docker build -t oootp-frontend ./apps/frontend
+      - cmd: docker build -t oootp-backend -f apps/backend/Dockerfile .
+      - cmd: docker build -t oootp-frontend -f apps/frontend/Dockerfile .
 
   - name: default
     description: Full dev setup including cluster and core
