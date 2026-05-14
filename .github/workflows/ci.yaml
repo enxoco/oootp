@@ -47,7 +47,7 @@ jobs:
         run: uds run build-images
 
       - name: Vouch
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        # if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           uds run vouch:package \
             --with github_token="${{ secrets.GITHUB_TOKEN }}" \
@@ -57,7 +57,7 @@ jobs:
             --with sarif_files="gitleaks.sarif.json,opengrep.sarif.json"
 
       - name: Publish
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        # if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           uds run publish:zarf-package \
             --with registry="registry.uds-mil.us" \
