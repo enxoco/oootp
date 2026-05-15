@@ -29,7 +29,6 @@ function clearToken() {
 export async function login(email: string, password: string) {
   const data = await client.api.auth.accessTokens.store({ body: { email, password } })
   storeToken(data.token)
-  user.value = data.user as AuthUser
 }
 
 export async function register(
@@ -42,7 +41,6 @@ export async function register(
     body: { email, password, passwordConfirmation, fullName },
   })
   storeToken(data.token)
-  user.value = data.user as AuthUser
 }
 
 export async function logout() {

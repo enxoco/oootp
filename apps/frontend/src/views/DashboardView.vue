@@ -1,21 +1,26 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { TuyauError } from '@tuyau/core/client'
 import { isLoggedIn, user, logout, fetchProfile } from '@/lib/auth'
 
 const router = useRouter()
+const loadError = ref('')
 
 if (!isLoggedIn.value) {
   router.replace('/')
 }
 
 onMounted(async () => {
-  if (isLoggedIn.value && !user.value) {
-    try {
-      await fetchProfile()
-    } catch {
+  if (!isLoggedIn.value) return
+  try {
+    await fetchProfile()
+  } catch (e: any) {
+    if (e instanceof TuyauError && e.isStatus(401)) {
       await logout()
       router.replace('/')
+    } else {
+      loadError.value = 'Could not load profile. Try refreshing.'
     }
   }
 })
@@ -29,11 +34,13 @@ async function handleLogout() {
 <template>
   <div class="page">
     <div class="card">
+      <div v-if="loadError" class="load-error">{{ loadError }}</div>
+
       <div class="header">
-        <div class="avatar">{{ user?.initials ?? '?' }}</div>
+        <div class="avatar">{{ user?.initials ?? '…' }}</div>
         <div class="user-info">
-          <p class="name">{{ user?.fullName ?? user?.email ?? 'Loading…' }}</p>
-          <p class="email">{{ user?.email }}</p>
+          <p class="name">{{ user?.fullName ?? user?.email ?? '…' }}</p>
+          <p class="email">{{ user?.email ?? '' }}</p>
         </div>
       </div>
 
@@ -66,6 +73,11 @@ async function handleLogout() {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.load-error {
+  color: #e55;
+  font-size: 0.85rem;
 }
 
 .header {
